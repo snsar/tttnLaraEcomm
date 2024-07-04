@@ -20,5 +20,15 @@ Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [RegisterController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group( function () {
-    Route::resource('products', ProductController::class);
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('products', ProductController::class);
+    });
+
+    Route::middleware('role:staff')->group(function () {
+        Route::resource('products', ProductController::class)->only(['index', 'show', 'store']);
+    });
+
+    Route::middleware('role:guest')->group(function () {
+        Route::resource('products', ProductController::class)->only(['index', 'show']);
+    });
 });
